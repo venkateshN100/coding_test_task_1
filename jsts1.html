@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Table with Sort and Pagination</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 20px auto;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+      cursor: pointer;
+    }
+
+    tr:hover {
+      background-color: #f5f5f5;
+    }
+
+    #pagination {
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    button {
+      background-color: #4caf50;
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      margin: 2px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+
+<table id="myTable">
+  <thead>
+    <tr>
+      <th onclick="sortTable(0)">Name</th>
+      <th onclick="sortTable(1)">Age</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Kumar</td>
+      <td>25</td>
+    </tr>
+    <tr>
+      <td>Krish</td>
+      <td>30</td>
+    </tr>
+    <tr>
+      <td>John Smith</td>
+      <td>25</td>
+    </tr>
+    <tr>
+      <td>Sathis</td>
+      <td>41</td>
+    </tr>
+    <tr>
+      <td>Karnan</td>
+      <td>27</td>
+    </tr>
+    <tr>
+      <td>Harish</td>
+      <td>35</td>
+    </tr>
+    <tr>
+      <td>Hari</td>
+      <td>45</td>
+    </tr>
+    <tr>
+      <td>Jan ram</td>
+      <td>16</td>
+    </tr>
+    <tr>
+      <td>John Dust</td>
+      <td>21</td>
+    </tr>
+    <tr>
+      <td>Jane Smith</td>
+      <td>30</td>
+    </tr>
+  </tbody>
+</table>
+
+<div id="pagination"></div>
+
+<script>
+  const table = document.getElementById('myTable');
+  const tbody = table.getElementsByTagName('tbody')[0];
+  const rows = Array.from(tbody.getElementsByTagName('tr'));
+
+  let sortColumn = 0;
+  let sortOrder = 1;
+  let currentPage = 1;
+  const rowsPerPage = 5;
+
+  function sortTable(column) {
+    if (sortColumn === column) {
+      sortOrder *= -1;
+    } else {
+      sortColumn = column;
+      sortOrder = 1;
+    }
+
+    rows.sort((a, b) => {
+      const aValue = a.getElementsByTagName('td')[column].innerText;
+      const bValue = b.getElementsByTagName('td')[column].innerText;
+      return sortOrder * (aValue.localeCompare(bValue));
+    });
+
+    updateTable();
+  }
+
+  function updateTable() {
+    const startIdx = (currentPage - 1) * rowsPerPage;
+    const endIdx = startIdx + rowsPerPage;
+
+    tbody.innerHTML = '';
+    for (let i = startIdx; i < endIdx && i < rows.length; i++) {
+      tbody.appendChild(rows[i].cloneNode(true));
+    }
+
+    updatePagination();
+  }
+
+  function updatePagination() {
+    const totalPages = Math.ceil(rows.length / rowsPerPage);
+    const paginationDiv = document.getElementById('pagination');
+    paginationDiv.innerHTML = '';
+
+    for (let i = 1; i <= totalPages; i++) {
+      const button = document.createElement('button');
+      button.innerText = i;
+      button.onclick = () => {
+        currentPage = i;
+        updateTable();
+      };
+      paginationDiv.appendChild(button);
+    }
+  }
+
+  sortTable(sortColumn);
+</script>
+
+</body>
+</html>
